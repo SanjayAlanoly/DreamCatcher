@@ -5,7 +5,7 @@
 <title>Add Volunteers</title>
 <link rel="stylesheet" type="text/css" href="view.css" media="all">
 <script type="text/javascript" src="view.js"></script>
-
+<script type="text/javascript" src="formVal.js"></script>
 </head>
 <body id="main_body" >
 	
@@ -13,7 +13,7 @@
 	<div id="form_container">
 	
 		<h1><a>Add Volunteers</a></h1>
-		<form id="form_519035" class="appnitro"  method="post" action="InsertVol.php">
+		<form name = "reg" id="form_519035" class="appnitro"  method="post" action="InsertVol.php" onSubmit="return formValidation();">
 					<div class="form_description">
 			<h2>Add Volunteers</h2>
 			<p>Enter the details of the volunteer</p>
