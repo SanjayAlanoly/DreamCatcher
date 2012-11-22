@@ -1,6 +1,6 @@
 <?php  
 
-	$debug = true;
+	$debug = false;
 	if(!$debug) error_reporting(0);
 	
 	getData();
@@ -22,16 +22,20 @@
 	$phonedonor = trim($phonedonor);
 	list($short_name) = explode(" ",$full_name);
 		
-	//googleSpreadsheetInsert($full_name,$phonedonor,$amount,$phonevol,$location,$time);
+	
 	databaseInsert($full_name,$phonedonor,$amount,$phonevol,$location,$time);
 	send($phonedonor, "Dear $short_name, thank you for registering with Make A Difference. Check your email for more details.");
 	
 	}
 	
 	
-	function googleSpreadsheetInsert($full_name,$phonedonor,$amount,$phonevol,$location,$time){
-	
+	function googleSpreadsheetInsert($full_name,$phonedonor,$amount,$vol_name,$city_name,$time){
+		
+		
 		global $debug;
+		if($debug)
+			printf("Name:" .$full_name. "  " .$phonedonor. "   " .$amount. "  " .$vol_name. "   " .$city_name. "   " .$time);
+		
 		
 		define('GDATA_USER','operations.cochin1@makeadiff.in');
 		define('GDATA_PASSWORD','madforever');
@@ -48,12 +52,12 @@
 	 
 			
 			$row = array(
-				'name' => $full_name,
-				'phonedonor' => $phonedonor,
+				'donorname' => $full_name,
+				'donorphone' => $phonedonor,
 				'amount' => $amount,
-				'phonevol' => $phonevol,
-				'city' => $location,
-				'timestamp' =>  $time
+				'volunteername' => $vol_name,
+				'city' => $city_name,
+				'time' =>  $time
 			);
 			
 			$insertRowEntry = $service->insertRow($row, '0AvlHVzJovtANdE9ob0lHSVJqUzhTWkpBQjNZcUhaQmc', 'od6');
@@ -75,7 +79,7 @@
 		
 		mysql_select_db("project_cf",$con);
 		
-		$sql = "SELECT id,city_id FROM project_cf.volunteer WHERE phone = '$phonevol'";
+		$sql = "SELECT id,city_id,name FROM project_cf.volunteer WHERE phone = '$phonevol'";
 		if(!($result = mysql_query($sql,$con)))
 				die("Error1:" . mysql_error());
 		$row = mysql_fetch_array($result);
@@ -92,9 +96,18 @@
 			
 			$vol_id = $row['id'];
 			$city_id = $row['city_id'];
+			
+			$vol_name = $row['name'];
+			$sql0 = "SELECT name FROM project_cf.city WHERE id = '$city_id'"; //To get the city name to add to Google Spreadsheet
+			if(!($result0 = mysql_query($sql0,$con)))
+				die("Error1:" . mysql_error());
+			$row0 = mysql_fetch_array($result0);	
+			$city_name = $row0['name'];
+			
 			$sql1 = "INSERT INTO project_cf.donation(name,phone,amount,volunteer_id,donation_on,city_id) VALUES('$full_name','$phonedonor','$amount','$vol_id','$time','$city_id')";
 			if(!mysql_query($sql1,$con))
-				die("Error2:" . mysql_error());
+				die("Error3:" . mysql_error());
+			googleSpreadsheetInsert($full_name,$phonedonor,$amount,$vol_name,$city_name,$time);
 		}
 		else{
 			$sql1 = "INSERT INTO project_cf.volunteer(name,email,phone,status,parent_id,city_id) VALUES('Unknown','Unknown','$phonevol','unknown',0,0)";
@@ -106,6 +119,7 @@
 			$sql2 = "INSERT INTO project_cf.donation(name,phone,amount,volunteer_id,donation_on,city_id) VALUES('$full_name','$phonedonor','$amount','$vol_id','$time',0)";
 			if(!mysql_query($sql2,$con))
 				die("Error4:" . mysql_error());
+			googleSpreadsheetInsert($full_name,$phonedonor,$amount,$phonevol,'Unknown',$time);
 		}
 		
 		mysql_close($con);		
