@@ -1,5 +1,6 @@
 <?php
 	
+	$sel_vol = $_POST["sel_vol"];
 	$name = $_POST["name"];    
 	$email = $_POST["email"];	
 	$phone = $_POST["phone"];
@@ -14,16 +15,16 @@
 	  }
 
 	mysql_select_db("project_cf", $con);
-
-	$sql= "INSERT INTO project_cf.volunteer(name,email,phone,status,parent_id,city_id) 
-		VALUES('$name','$email','$phone','$status','$under','$city')";
+	
+	$sql ="UPDATE project_cf.volunteer SET name = '$name', email = '$email', phone = '$phone',
+			status = $status, parent_id = $under, city_id = $city WHERE volunteer.id = $sel_vol";
 
 	if (!mysql_query($sql,$con))
 	  {
 	  die('Error: ' . mysql_error());
 	  }
 	
-	print "Volunteer " .$name. " has been inserted into the database";	
+	print "Details of volunteer " .$name. " has been edited";	
 	
 	mysql_close($con);
 ?>
