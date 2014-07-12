@@ -37,8 +37,8 @@
 			printf("Name:" .$full_name. "  " .$phonedonor. "   " .$amount. "  " .$vol_name. "   " .$city_name. "   " .$time);
 		
 		
-		define('GDATA_USER','operations.cochin1@makeadiff.in');
-		define('GDATA_PASSWORD','madforever');
+		define('GDATA_USER','');
+		define('GDATA_PASSWORD','');
 		
 		require_once '/Zend/Loader.php';
 		Zend_Loader::loadClass('Zend_Gdata_Spreadsheets');
@@ -157,7 +157,7 @@
 	function _sendCall($number, $message) {
 		
 		global $debug;
-		$gupshup_account = array('username'=>'2000030788','password'=>'6BeNqpFy6');
+		$gupshup_account = array('username'=>'','password'=>'');
 		$gupshup_param = array(
 			'method'	=>	'sendMessage',
 			'v'			=>	'1.1',
